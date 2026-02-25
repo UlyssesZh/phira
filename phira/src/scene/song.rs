@@ -736,6 +736,7 @@ impl SongScene {
     ) -> Result<LocalSceneTask> {
         let mut fs = fs_from_path(local_path)?;
         let can_rated = id.is_some() || local_path.starts_with(':');
+        #[cfg(feature = "video")]
         let local_path = local_path.to_owned();
         #[cfg(feature = "closed")]
         let rated = {
