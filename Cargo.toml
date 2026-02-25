@@ -10,6 +10,9 @@ members = [
 ]
 resolver = "2"
 
+[workspace.lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(closed)'] }
+
 [workspace.package]
 version = "0.6.7"
 edition = "2021"
