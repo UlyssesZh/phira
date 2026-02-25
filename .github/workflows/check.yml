@@ -29,9 +29,7 @@ jobs:
           cache-all-crates: "true"
 
       - name: Clippy
-        run: |
-          cargo clippy --all-targets --all-features --workspace -- -D warnings &&
-          cargo clippy --all-targets --workspace -- -D warnings
+        run: cargo clippy --all-targets --all-features --workspace -- -D warnings
 
   fmt:
     name: Format

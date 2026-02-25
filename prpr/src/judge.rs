@@ -159,7 +159,7 @@ pub enum Judgement {
     Miss,
 }
 
-#[cfg(not(feature = "closed"))]
+#[cfg(not(closed))]
 #[derive(Default)]
 pub(crate) struct JudgeInner {
     diffs: Vec<f32>,
@@ -170,7 +170,7 @@ pub(crate) struct JudgeInner {
     num_of_notes: u32,
 }
 
-#[cfg(not(feature = "closed"))]
+#[cfg(not(closed))]
 impl JudgeInner {
     pub fn new(num_of_notes: u32) -> Self {
         Self {
@@ -255,9 +255,9 @@ impl JudgeInner {
 }
 
 #[rustfmt::skip]
-#[cfg(feature = "closed")]
+#[cfg(closed)]
 pub mod inner;
-#[cfg(feature = "closed")]
+#[cfg(closed)]
 use inner::*;
 
 type Judgements = Vec<(f32, u32, u32, Result<Judgement, bool>)>;

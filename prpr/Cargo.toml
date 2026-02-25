@@ -8,7 +8,6 @@ license = { workspace = true }
 
 [features]
 default = ["log", "video"]
-closed = []
 video = ["dep:prpr-avc"]
 log = ["dep:tracing-subscriber", "dep:colored"]
 

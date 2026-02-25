@@ -8,7 +8,6 @@ license = { workspace = true }
 crate-type = ["lib", "cdylib"]
 
 [features]
-closed = ["prpr/closed"]
 video = ["prpr/video"]
 chat = []
 aa = []
