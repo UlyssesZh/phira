@@ -478,7 +478,7 @@ impl Judge {
             .collect();
         // pos[line][touch]
         let mut pos = Vec::<Vec<Option<Point>>>::with_capacity(chart.lines.len());
-        for id in 0..pos.capacity() {
+        for id in 0..chart.lines.len() {
             chart.lines[id].object.set_time(t);
             let inv = chart.lines[id].now_transform(res, &chart.lines).try_inverse().unwrap();
             pos.push(
