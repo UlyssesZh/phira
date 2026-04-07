@@ -693,7 +693,7 @@ impl Judge {
                         let x = &mut note.object.translation.0;
                         x.set_time(t);
                         let x = x.now();
-                        if self.key_down_count == 0 && !pos.iter().any(|it| it.is_some_and(|it| (it.x - x).abs() <= X_DIFF_MAX)) {
+                        if self.key_down_count == 0 && !pos.iter().any(|it| it.is_some_and(|it| (it.x - x).abs() / note.judge_area <= X_DIFF_MAX)) {
                             if t > *up_time + UP_TOLERANCE {
                                 note.judge = JudgeStatus::Judged;
                                 judgements.push((Judgement::Miss, line_id, *id, None));
@@ -729,7 +729,7 @@ impl Judge {
                 if self.key_down_count != 0
                     || pos.iter().any(|it| {
                         it.is_some_and(|it| {
-                            let dx = (it.x - x).abs();
+                            let dx = (it.x - x).abs() / note.judge_area;
                             dx <= X_DIFF_MAX && dt <= (LIMIT_BAD - LIMIT_PERFECT * (dx - 0.9).max(0.))
                         })
                     })
