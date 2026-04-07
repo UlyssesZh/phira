@@ -8,7 +8,7 @@ use crate::{
     save_data,
     scene::{confirm_dialog, import_chart_to, parse_warnings_to_string, TEX_BACKGROUND, TEX_ICON_BACK},
 };
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{anyhow, Context, Result};
 use macroquad::prelude::*;
 use once_cell::sync::Lazy;
 use prpr::{
@@ -423,15 +423,7 @@ impl Scene for MainScene {
                             let mut zip = zip::ZipArchive::new(BufReader::new(File::open(&file)?))?;
                             let config: ResPackInfo =
                                 serde_yaml::from_reader(zip.by_name("info.yml").context("missing info.yml")?).context("invalid info.yml")?;
-                            if config.name.is_empty() {
-                                bail!("empty name");
-                            }
-                            if config.name.len() > 100 {
-                                bail!("name too long");
-                            }
-                            if config.description.len() > 1000 {
-                                bail!("description too long");
-                            }
+                            config.verify()?;
                             let mut buffer = Vec::new();
                             for file in [
                                 "click.png",

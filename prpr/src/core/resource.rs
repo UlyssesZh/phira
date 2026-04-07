@@ -70,9 +70,9 @@ pub struct ResPackInfo {
     #[serde(default = "default_tinted")]
     pub hit_fx_tinted: bool,
 
-    pub hold_atlas: (u32, u32),
+    pub hold_atlas: (u16, u16),
     #[serde(rename = "holdAtlasMH")]
-    pub hold_atlas_mh: (u32, u32),
+    pub hold_atlas_mh: (u16, u16),
 
     #[serde(default)]
     pub hold_keep_head: bool,
@@ -99,6 +99,21 @@ fn parse_color_guess_alpha(c: u32) -> Color {
 }
 
 impl ResPackInfo {
+    pub fn verify(&self) -> Result<()> {
+        if self.name.is_empty() {
+            bail!("empty name");
+        }
+        if self.name.len() > 100 {
+            bail!("name too long");
+        }
+        if self.description.len() > 1000 {
+            bail!("description too long");
+        }
+        if !(1..=10240).contains(&self.hit_fx.0.saturating_mul(self.hit_fx.1)) {
+            bail!("Invalid hit_fx");
+        }
+        Ok(())
+    }
     pub fn color_perfect(&self) -> Color {
         parse_color_guess_alpha(self.color_perfect)
     }
@@ -130,19 +145,19 @@ pub struct NoteStyle {
     pub flick: SafeTexture,
     pub drag: SafeTexture,
     pub hold_body: Option<SafeTexture>,
-    pub hold_atlas: (u32, u32),
+    pub hold_atlas: (u16, u16),
 }
 
 impl NoteStyle {
     pub fn verify(&self) -> Result<()> {
-        if (self.hold_atlas.0 + self.hold_atlas.1) as f32 >= self.hold.height() {
+        if self.hold_atlas.0.saturating_add(self.hold_atlas.1) as f32 >= self.hold.height() {
             bail!("Invalid atlas");
         }
         Ok(())
     }
 
     #[inline]
-    fn to_uv(&self, t: u32) -> f32 {
+    fn to_uv(&self, t: u16) -> f32 {
         t as f32 / self.hold.height()
     }
 
@@ -199,6 +214,7 @@ impl ResourcePack {
             };
         }
         let info: ResPackInfo = serde_yaml::from_str(&String::from_utf8(fs.load_file("info.yml").await.context("Missing info.yml")?)?)?;
+        info.verify()?;
         let mut note_style = NoteStyle {
             click: load_tex!("click.png"),
             hold: load_tex!("hold.png"),
@@ -217,6 +233,7 @@ impl ResourcePack {
             hold_atlas: info.hold_atlas_mh,
         };
         note_style_mh.verify()?;
+
         if info.hold_repeat {
             fn get_body(style: &mut NoteStyle) {
                 let pixels = style.hold.get_texture_data();
@@ -225,7 +242,7 @@ impl ResourcePack {
                 let atlas = style.hold_atlas;
                 let res = Texture2D::from_rgba8(
                     width,
-                    height - atlas.0 as u16 - atlas.1 as u16,
+                    height - atlas.0 - atlas.1,
                     &pixels.bytes[(atlas.0 as usize * width as usize * 4)..(pixels.bytes.len() - atlas.1 as usize * width as usize * 4)],
                 );
                 let context = unsafe { get_internal_gl() }.quad_context;
