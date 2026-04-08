@@ -6,6 +6,7 @@ TARGETS=(
     "aarch64-apple-ios"
     "aarch64-unknown-linux-ohos"
     "x86_64-unknown-linux-gnu"
+    "x86_64-unknown-linux-musl"
     "aarch64-pc-windows-msvc"
     "aarch64-pc-windows-gnullvm"
     "x86_64-pc-windows-gnu"
